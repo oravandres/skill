@@ -9,7 +9,7 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 ## Tech Stack
 
 - **Frontend:** React + React Router v7 + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
-- **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
+- **Backend:** Firebase (Auth with Google, Firestore for user data) — no custom API
 - **Styling:** Plepic design system, canonical in `public-web`: tokens in the `:root` of [css/styles.css](https://github.com/Plepic-OU/public-web/blob/main/css/styles.css); the visual reference moved to Claude Design when `design-system.html` was retired ([public-web#251](https://github.com/Plepic-OU/public-web/pull/251)). Main color is green; orange used sparingly only, one per viewport.
   - **Tokens and base styles are vendored** in `src/design-system.css`, imported first in `src/main.tsx` (ahead of all component CSS, where the CDN sheet used to load). Its `:root` copies the tokens this app uses, written exactly as public-web writes them; `pnpm check:tokens` (also a CI step) fails when one drifts, and the fix is to copy the new value in. The element rules (reset, html, body, links, headings, paragraphs, images) are a frozen copy of public-web@1fbf2e0's `design-system.css`, which `index.html` loaded from jsDelivr until that file was deleted upstream; they are not checked.
   - **Fonts:** Bitter / Hanken Grotesk / JetBrains Mono are self-hosted in `public/fonts/`, declared in `src/fonts.css`; their tokens live in `src/design-system.css`. The files are byte-identical copies of public-web's subsets. Do not reintroduce Zilla Slab or Plus Jakarta Sans.
@@ -24,11 +24,11 @@ pnpm install          # install dependencies
 pnpm dev              # local dev server (Vite)
 pnpm build            # production build (typecheck + vite build → web/)
 pnpm test             # run unit tests in watch mode (Vitest)
-pnpm test:run         # run unit tests once (42 tests)
+pnpm test:run         # run unit tests once
 pnpm test <file>      # run a single test file
-pnpm emulators        # start Firebase Auth + Firestore emulators (requires Java 11+)
+pnpm emulators        # start Firebase Auth + Firestore emulators (requires Java 21+)
 pnpm test:e2e         # run E2E tests (assumes emulators running)
-pnpm test:e2e:emulator # run E2E tests with auto-managed emulators (25 scenarios)
+pnpm test:e2e:emulator # run E2E tests with auto-managed emulators
 pnpm lint             # ESLint (includes sonarjs complexity/duplication rules)
 pnpm format           # Prettier
 pnpm typecheck        # tsc --noEmit
@@ -37,7 +37,7 @@ pnpm test:mutate      # Stryker mutation testing on data layer (~2 min, manual/C
 ```
 
 Pre-commit hooks (Husky + lint-staged) enforce: ESLint, Prettier, type-check.
-Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
+Pre-push hook runs unit tests only (`pnpm test:run`); CI runs the E2E tests.
 
 ## Key Directories
 
@@ -49,11 +49,11 @@ Pre-push hooks run: unit tests + E2E tests (with smart emulator detection).
 - `src/data/skill-trees.json` — Static skill tree data (3 axes: autonomy, parallel execution, skill usage) with Material Symbols icons
 - `src/firebase.ts` — Firebase app init, emulator detection
 - `src/contexts/AuthContext.tsx` — Auth state context + `useAuth()` hook
-- `src/pages/` — Page components: LandingPage (unauthenticated), ProfilePage (owner/visitor)
-- `src/hooks/` — Custom hooks: useSkillState (shared claim/unclaim/animation/safety-zone logic)
-- `src/components/` — React components: Header, Hero, SafetyZoneSelector, SkillTree, QuestPath, SkillNode, CelebrationEffect, SignInModal, ConfirmDialog, Toast, ShareButton
+- `src/pages/` — Page components: LandingPage (unauthenticated), ProfilePage (owner/visitor), SharedResultPage (levels-only result from a `/shared/:code` link)
+- `src/hooks/` — Custom hooks: useSkillState (shared claim/unclaim/animation/safety-zone logic), useSyncState (login sync and save status), useActiveAxis (which path dominates the viewport), useDialog, and smaller auth, profile and analytics hooks
+- `src/components/` — React components: SkillTreeLayout (page layout), Header, Hero, SafetyZoneSelector, SafetyZoneBadge, FirstRunHint, PathNav, SkillTree, QuestPath, SkillNode, LevelCrest, TrainingCTA, CelebrationEffect, SignInModal, ConfirmDialog, Toast, ShareButton
 - `src/types/skill-tree.ts` — TypeScript interfaces for skill tree data and app state
-- `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
+- `src/data/` — Data module (skill-trees.ts), state persistence (state.ts), XP, levels and classes (progression.ts), share codes (share.ts), public profiles (profile.ts), outbound plepic.com links (links.ts), auth helpers (auth.ts), Firestore sync (sync.ts)
 - `infra/` — Terraform config (google-beta provider, Firebase project + Firestore, GCS remote state, preview env infra)
 - `preview/` — Preview environment container (Dockerfile, nginx.conf, startup.sh, seed.mjs, firebase.json). Seeder uses firebase-admin with deterministic UIDs (`demo-alice`, `demo-bob`) so `/profile/demo-alice` is a stable preview link across deploys.
 - `e2e/` — Playwright + playwright-bdd E2E tests (Gherkin features + step definitions)
@@ -131,7 +131,6 @@ The cloud VM has Node.js 22, OpenJDK 21, pnpm, and Docker pre-installed. Network
 - TypeScript with strong types throughout
 - Mobile-first, playful > serious, less is more
 - **No project/user memories** — do not use the Claude Code memory system for this project. All project knowledge belongs in CLAUDE.md or docs/ files checked into git.
-- Pre-push hook runs unit tests only (not E2E — too slow, CI covers them)
 
 ## Preview Environment Gotchas
 

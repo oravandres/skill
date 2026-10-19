@@ -23,7 +23,7 @@ Single-page application, no server-side rendering.
                │ Firebase SDK (client-side)
 ┌──────────────┼──────────────────┐
 │  Firebase                       │
-│  - Auth (Google, GitHub)        │
+│  - Auth (Google)                │
 │  - Firestore (user skill data)  │
 │  - Security Rules               │
 └─────────────────────────────────┘
@@ -32,18 +32,18 @@ Single-page application, no server-side rendering.
 - **Frontend:** React + Vite + TypeScript, deployed to GitHub Pages
 - **SPA Routing:** GitHub Pages serves static files only — use the 404.html trick (copy `index.html` to `404.html`) so that direct navigation to routes like `/profile/{userId}` loads the SPA instead of returning a 404
 - **Backend:** Firebase (Auth + Firestore), no custom API layer
-- **Styling:** [Plepic design system](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.html) ([CSS](https://github.com/Plepic-OU/public-web/raw/refs/heads/main/design-system.css)), mobile-first with desktop support
+- **Styling:** [Plepic design system](https://github.com/Plepic-OU/public-web/blob/1fbf2e0/design-system.html) ([CSS](https://github.com/Plepic-OU/public-web/blob/1fbf2e0/design-system.css)), mobile-first with desktop support. Both links are pinned to the public-web commit this app used; the files were later retired from `main`.
 - **Infrastructure:** Terraform for Firebase provisioning (project, Auth providers, Firestore database). Terraform state stored remotely. Firebase Security Rules and indexes deployed via Firebase CLI (`firebase.json`, `firestore.rules`, `firestore.indexes.json` checked into repo) — not managed by Terraform to avoid drift.
 
 ## Skill Tree Content
 
-The skill tree content is defined in `docs/skill-trees.json` and ships as static data with the app bundle. Three axes:
+The skill tree content is defined in `src/data/skill-trees.json` and ships as static data with the app bundle. Three axes:
 
 - **Autonomy** (6 levels) — How much you delegate to AI and your verification strategy
-- **Parallel Execution** (5 levels) — How many concurrent AI tasks you manage
+- **Parallel Execution** (6 levels; 5 when this spec was written, the sixth was added in PR #4, 2026-04-22) — How many concurrent AI tasks you manage
 - **Skill Usage** (6 levels) — How sophisticated your AI tooling is
 
-Plus a **Safety Zone** dimension (safe-zone / normal / hardcore / impossible) — this describes the consequence level of your environment, not a skill progression. Selected separately.
+Plus a **Safety Zone** dimension (sandbox / normal / hardcore / impossible; `sandbox` was first called `safe-zone`) — this describes the consequence level of your environment, not a skill progression. Selected separately.
 
 Each level includes: name, description, verification strategy, obstacles, and how-to-progress guidance.
 
@@ -122,10 +122,10 @@ users/{userId}
   ├── displayName: string
   ├── avatarUrl: string
   ├── updatedAt: Timestamp
-  ├── safetyZone: "safe-zone" | "normal" | "hardcore" | "impossible"
+  ├── safetyZone: "sandbox" | "normal" | "hardcore" | "impossible"
   └── skills: {
         autonomy: 0-6,
-        parallelExecution: 0-5,
+        parallelExecution: 0-6,
         skillUsage: 0-6
       }
 ```
