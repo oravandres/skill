@@ -6,10 +6,7 @@
  * public/ to the deploy root; the source stylesheet's relative ../fonts/ would
  * not survive that move.
  *
- * The design-system stylesheet this app loads from CDN is pinned to a
- * public-web commit that predates the 2026-07-23 type revision, and that file
- * no longer exists on main, so the pin cannot be advanced. Until token
- * distribution is resolved, the three font tokens are overridden here.
+ * The font tokens that name these faces live in design-system.css.
  */
 
 @font-face {

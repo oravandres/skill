@@ -26,6 +26,17 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+  # Its own job so upstream drift reads as what it is, not as a lint failure.
+  design-tokens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+      - name: Design tokens match public-web
+        run: node scripts/check-design-tokens.mjs
+
   unit-tests:
     runs-on: ubuntu-latest
     steps:

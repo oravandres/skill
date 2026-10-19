@@ -1,3 +1,6 @@
+// First, before any component CSS, where the CDN stylesheet used to load:
+// component rules must keep winning specificity ties with these base rules.
+import './design-system.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'

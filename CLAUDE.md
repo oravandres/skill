@@ -10,9 +10,9 @@ Gamified web app where developers self-assess agentic coding skills via an RPG-s
 
 - **Frontend:** React + React Router v7 + Vite + TypeScript SPA, deployed to GitHub Pages from `web/`
 - **Backend:** Firebase (Auth with Google/GitHub, Firestore for user data) — no custom API
-- **Styling:** Plepic design system, canonical at [design-system.html](https://github.com/Plepic-OU/public-web/blob/main/design-system.html) + [css/styles.css](https://github.com/Plepic-OU/public-web/blob/main/css/styles.css) in `public-web`. Main color is green; orange used sparingly only, one per viewport.
-  - **Colour and spacing tokens arrive from a CDN pin that cannot be advanced.** `index.html` loads `design-system.css` from public-web commit `1fbf2e0` (2026-04-03); that file was later folded into `css/styles.css` and deleted from `main`, so there is no newer commit to point at. Fixing this means choosing a distribution mechanism (vendor the tokens here with a CI diff against public-web's `:root`, or publish a tagged artifact from public-web), not bumping the pin.
-  - **Fonts are already realigned** and no longer depend on that pin: Bitter / Hanken Grotesk / JetBrains Mono are self-hosted in `public/fonts/`, declared in `src/fonts.css`, with the three font tokens overridden in `src/index.css`. The files are byte-identical copies of public-web's subsets. Do not reintroduce Zilla Slab or Plus Jakarta Sans.
+- **Styling:** Plepic design system, canonical in `public-web`: tokens in the `:root` of [css/styles.css](https://github.com/Plepic-OU/public-web/blob/main/css/styles.css); the visual reference moved to Claude Design when `design-system.html` was retired ([public-web#251](https://github.com/Plepic-OU/public-web/pull/251)). Main color is green; orange used sparingly only, one per viewport.
+  - **Tokens and base styles are vendored** in `src/design-system.css`, imported first in `src/main.tsx` (ahead of all component CSS, where the CDN sheet used to load). Its `:root` copies the tokens this app uses, written exactly as public-web writes them; `pnpm check:tokens` (also a CI step) fails when one drifts, and the fix is to copy the new value in. The element rules (reset, html, body, links, headings, paragraphs, images) are a frozen copy of public-web@1fbf2e0's `design-system.css`, which `index.html` loaded from jsDelivr until that file was deleted upstream; they are not checked.
+  - **Fonts:** Bitter / Hanken Grotesk / JetBrains Mono are self-hosted in `public/fonts/`, declared in `src/fonts.css`; their tokens live in `src/design-system.css`. The files are byte-identical copies of public-web's subsets. Do not reintroduce Zilla Slab or Plus Jakarta Sans.
 - **Infra:** Terraform for Firebase provisioning; Firebase CLI for security rules/indexes. Before running Terraform: `export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`
 - **Preview Environments:** Each PR gets a Cloud Run service (`preview-pr-{number}`) running SPA + Firebase emulators via nginx reverse proxy. See `docs/superpowers/specs/2026-04-16-preview-environments-design.md`
 - **Package manager:** pnpm (not npm)
@@ -32,6 +32,7 @@ pnpm test:e2e:emulator # run E2E tests with auto-managed emulators (25 scenarios
 pnpm lint             # ESLint (includes sonarjs complexity/duplication rules)
 pnpm format           # Prettier
 pnpm typecheck        # tsc --noEmit
+pnpm check:tokens     # compare design tokens with public-web main (CI runs it; needs network)
 pnpm test:mutate      # Stryker mutation testing on data layer (~2 min, manual/CI only)
 ```
 

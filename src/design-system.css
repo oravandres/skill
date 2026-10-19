@@ -1,0 +1,141 @@
+/* Plepic design system, vendored from Plepic-OU/public-web.
+ *
+ * Tokens: the :root block copies the tokens this app uses from public-web's
+ * css/styles.css on main, with their values written exactly as public-web
+ * writes them. `pnpm check:tokens` (run in CI) fails when one of them drifts
+ * from public-web; update the value here to follow it.
+ *
+ * Base styles: the element rules below are copied from public-web@1fbf2e0
+ * design-system.css, which this app loaded from jsDelivr until that file was
+ * folded into css/styles.css and deleted. They are kept as the app has always
+ * rendered them and are not checked: plepic.com's own base rules have since
+ * moved on with its type revision.
+ *
+ * main.tsx imports this file before anything else, which is where the CDN
+ * stylesheet used to load, so component rules keep winning specificity ties
+ * with these base rules (e.g. `.visitorMessage p` over `p:last-child`). */
+
+:root {
+  /* ── Green system ── H=137°, S=73% (vivid S=100%) */
+  --green-vivid: #00c638;
+  --green-brand: #137b30;
+  --green-dark: #0d5822;
+  --green-light: #c5f6d3;
+  --green-surface: #edfcf1;
+
+  /* ── Accent ── one per viewport */
+  --accent: #e26c45;
+
+  /* ── Neutrals ── */
+  --bg: #faf7f2;
+  --bg-alt: #f3efe7;
+  --surface: #ffffff;
+
+  /* ── Text ── */
+  --text: #1c1c1a;
+  --text-2: #4a4a45;
+  --text-3: #6b6b60;
+
+  /* ── Borders ── */
+  --border: #e5e2dc;
+
+  /* ── Typography ── faces are self-hosted, see fonts.css */
+  --font-display: 'Bitter', 'Bitter Fallback', Georgia, serif;
+  --font-body: 'Hanken Grotesk', 'Hanken Fallback', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Mono Fallback', monospace;
+
+  /* ── Spacing ── */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* ── Motion ── */
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: var(--dur-fast) ease;
+  --transition-base: var(--dur-base) ease;
+  --transition-smooth: var(--dur-base) var(--ease-settle);
+}
+
+/* ── Reset & base ── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--green-brand);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+a:focus-visible {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Typography ── */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: clamp(2rem, 2rem + 3vw, 3.5rem);
+}
+h2 {
+  font-size: clamp(1.5rem, 1.25rem + 2vw, 2.25rem);
+  font-weight: 600;
+}
+h3 {
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.5rem);
+}
+h4 {
+  font-size: 1.15rem;
+}
+
+p {
+  margin-bottom: var(--space-md);
+}
+p:last-child {
+  margin-bottom: 0;
+}

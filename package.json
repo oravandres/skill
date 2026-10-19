@@ -21,6 +21,7 @@
     "test:e2e:emulator": "firebase emulators:exec 'pnpm test:e2e'",
     "test:mutate": "[ \"$SKILL_ENV\" != \"claude_web\" ] && stryker run || echo 'Skipped: mutation testing runs in CI, not in cloud'",
     "typecheck": "tsc --noEmit",
+    "check:tokens": "node scripts/check-design-tokens.mjs",
     "prepare": "husky",
     "dc:up": "[ -n \"$SKILL_GITHUB_API_TOKEN\" ] || { echo 'Error: SKILL_GITHUB_API_TOKEN not set'; exit 1; } && devcontainer up --workspace-folder .",
     "dc:rebuild": "[ -n \"$SKILL_GITHUB_API_TOKEN\" ] || { echo 'Error: SKILL_GITHUB_API_TOKEN not set'; exit 1; } && devcontainer up --workspace-folder . --remove-existing-container --build-no-cache",
