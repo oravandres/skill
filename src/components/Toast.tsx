@@ -59,10 +59,13 @@ export default function Toast() {
     }
   }, [])
 
-  if (messages.length === 0) return null
-
+  // The live region stays mounted while empty: screen readers only announce
+  // changes inside a region that already exists, so rendering it together with
+  // its first message would leave that message unannounced. role="status"
+  // implies aria-atomic="true", which would re-read every toast still on
+  // screen; false announces only the one just added.
   return (
-    <div className={styles.container} aria-live="polite">
+    <div className={styles.container} role="status" aria-live="polite" aria-atomic="false">
       {messages.map((msg) => (
         <div
           key={msg.id}

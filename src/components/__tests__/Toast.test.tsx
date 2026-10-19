@@ -9,8 +9,16 @@ describe('Toast', () => {
     render(<Toast />)
   })
 
-  it('renders nothing when there are no messages', () => {
-    expect(screen.queryByRole('status')).toBeNull()
+  it('keeps an empty live region mounted before any message arrives', () => {
+    // Screen readers only announce changes inside a live region that already
+    // exists, so the region must be in the DOM before the first toast.
+    const region = screen.getByRole('status')
+    expect(region).toBeEmptyDOMElement()
+    expect(region).toHaveAttribute('aria-atomic', 'false')
+
+    act(() => showToast('Copied!'))
+
+    expect(region).toHaveTextContent('Copied!')
   })
 
   it('shows a toast message after showToast is called', () => {
